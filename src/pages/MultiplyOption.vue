@@ -21,7 +21,7 @@
         <!-- <td v-for="option in options" :key="option">
           {{ option }}
         </td> -->
-        <td>{{ options[0] }}</td>
+        <td @click="selected(options[0])">{{ options[0] }}</td>
         <td>{{ options[1] }}</td>
         <td>{{ options[2] }}</td>
       </tr>
@@ -35,9 +35,9 @@
 </template>
 
   <script>
-import { ref } from 'vue';
+import { ref, defineComponent } from 'vue';
 
-export default {
+export default defineComponent({
   name: 'MultiplyOption',
 
   setup() {
@@ -76,12 +76,17 @@ export default {
       return array;
     }
 
+    function selected(param) {
+      alert(param);
+    }
+
     return {
       number,
-      answer,
+      //answer,
       msg,
       options,
+      selected,
     };
   },
-};
+});
 </script>
