@@ -4,6 +4,8 @@
     </q-page> -->
   <div class="q-pa-md">
     <q-card class="bg-yellow-3">
+      <q-btn flat> ❤️ {{ lifes }} </q-btn>
+      <q-btn flat><q-icon color="green" name="check" /> {{ score }} </q-btn>
       <q-card-section class="text-right q-mr-xl">
         <div class="text-h1 text-weight-bold">{{ number.a }}</div>
         <div class="row justify-between">
@@ -55,6 +57,8 @@ const answer = ref(number.value.a * number.value.b);
 const options = ref([]);
 const msg = ref('Escolha sua resposta');
 const selected = ref('');
+const lifes = ref(3);
+const score = ref(0);
 
 for (var i = 0; i < 5; i++) {
   options.value.push(distractors(i));
@@ -80,6 +84,8 @@ function shuffleArray(array) {
 
 const onSelected = (param) => {
   selected.value = param;
+  if (selected.value == answer.value) ++score.value;
+  else --lifes.value;
 };
 </script>
 
