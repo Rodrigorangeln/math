@@ -2,6 +2,19 @@
   <!-- <q-page class="flex flex-center">
       <img alt="Quasar logo" src="../assets/logo.svg" style="width: 200px; height: 200px">
     </q-page> -->
+
+  <q-dialog v-model="alert">
+    <q-card>
+      <q-card-section>
+        <div class="text-h6">Você teve {{ score }} acertos!</div>
+      </q-card-section>
+
+      <q-card-actions align="center">
+        <q-btn flat label="OK" color="primary" v-close-popup />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
   <div class="q-pa-md">
     <q-card class="bg-yellow-3">
       <q-btn flat> ❤️ {{ lifes }} </q-btn>
@@ -16,9 +29,9 @@
         </div>
       </q-card-section>
       <q-separator inset size="0.3rem" color="dark" />
-      <q-card-section class="text-center" :class="selected ? 'text-h3' : ''">
+      <!-- <q-card-section class="text-center" :class="selected ? 'text-h3' : ''">
         {{ selected ? selected : msg }}
-      </q-card-section>
+      </q-card-section> -->
       <tr class="row text-h2 text-weight-bold justify-between q-pa-md">
         <div
           v-for="(option, index) in options"
@@ -36,35 +49,55 @@
           >
         </div>
       </tr>
+      <q-btn
+        color="secondary"
+        :label="labelBtn"
+        @click="labelBtn == 'Começar' ? start() : toCheck()"
+        class="q-mb-sm full-width"
+      />
     </q-card>
   </div>
 </template>
 
-  <script setup>
+<script setup>
 import { ref } from 'vue';
 import 'animate.css';
 
-const random = (param = 10) => {
-  let randomNumber = Math.floor(Math.random() * param) + 2;
-  return randomNumber;
-};
-
 let number = ref({
-  a: random(),
-  b: random(),
+  a: 0,
+  b: 0,
 });
+
+function toCheck() {
+  console.log('toCheck');
+}
+
 const answer = ref(number.value.a * number.value.b);
 const options = ref([]);
 const msg = ref('Escolha sua resposta');
 const selected = ref('');
 const lifes = ref(3);
 const score = ref(0);
+const alert = ref(false);
+let labelBtn = ref('Começar');
 
-for (var i = 0; i < 5; i++) {
-  options.value.push(distractors(i));
+function start() {
+  this.number.a = random();
+  this.number.b = random();
+
+  for (var i = 0; i < 5; i++) {
+    options.value.push(distractors(i));
+  }
+  options.value.push(answer.value);
+  shuffleArray(options.value);
+
+  this.labelBtn = 'OK';
 }
-options.value.push(answer.value);
-shuffleArray(options.value);
+
+const random = (param = 9) => {
+  let randomNumber = Math.floor(Math.random() * param) + 2;
+  return randomNumber;
+};
 
 function distractors(i) {
   if (i < 3) {
@@ -85,7 +118,10 @@ function shuffleArray(array) {
 const onSelected = (param) => {
   selected.value = param;
   if (selected.value == answer.value) ++score.value;
-  else --lifes.value;
+  else if (lifes.value > 0) --lifes.value;
+  else {
+    alert.value = true;
+  }
 };
 </script>
 
