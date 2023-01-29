@@ -68,11 +68,7 @@ let number = ref({
   b: 0,
 });
 
-function toCheck() {
-  console.log('toCheck');
-}
-
-const answer = ref(number.value.a * number.value.b);
+const answer = ref();
 const options = ref([]);
 const msg = ref('Escolha sua resposta');
 const selected = ref('');
@@ -81,16 +77,20 @@ const score = ref(0);
 const alert = ref(false);
 let labelBtn = ref('Começar');
 
+function toCheck() {
+  console.log('toCheck');
+}
+
 function start() {
   this.number.a = random();
   this.number.b = random();
+  this.answer = number.value.a * number.value.b;
 
   for (var i = 0; i < 5; i++) {
     options.value.push(distractors(i));
   }
   options.value.push(answer.value);
   shuffleArray(options.value);
-
   this.labelBtn = 'OK';
 }
 
@@ -117,8 +117,10 @@ function shuffleArray(array) {
 
 const onSelected = (param) => {
   selected.value = param;
-  if (selected.value == answer.value) ++score.value;
-  else if (lifes.value > 0) --lifes.value;
+  if (selected.value == answer.value) {
+    ++score.value;
+    this.start();
+  } else if (lifes.value > 0) --lifes.value;
   else {
     alert.value = true;
   }
