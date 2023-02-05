@@ -17,7 +17,7 @@
 
   <div class="q-pa-md">
     <q-card class="bg-yellow-3">
-      <q-btn flat> ❤️ {{ lifes }} </q-btn>
+      <q-btn flat :class="aniHeart"> ❤️ {{ lifes }} </q-btn>
       <q-btn flat><q-icon color="green" name="check" /> {{ score }} </q-btn>
       <q-card-section class="text-right q-mr-xl">
         <div class="text-h1 text-weight-bold">{{ number.a }}</div>
@@ -39,10 +39,8 @@
           class="col-4 text-center"
         >
           <q-btn
-            :class="
-              selected == option ? 'animate__animated animate__shakeX' : ''
-            "
-            @click="onSelected(option)"
+            :class="selected == option ? 'selected' : ''"
+            @click="selected = option"
             size="0.9em"
             flat
             >{{ option }}</q-btn
@@ -70,15 +68,24 @@ let number = ref({
 
 const answer = ref();
 const options = ref([]);
-const msg = ref('Escolha sua resposta');
+//const msg = ref('Escolha sua resposta');
 const selected = ref('');
 const lifes = ref(3);
 const score = ref(0);
 const alert = ref(false);
 let labelBtn = ref('Começar');
+let aniHeart = ref(null);
 
 function toCheck() {
-  console.log('toCheck');
+  if (selected.value == answer.value) {
+    ++score.value;
+    this.start();
+  } else if (lifes.value > 0) {
+    --lifes.value;
+    aniHeart.value = 'animate__animated animate__shakeY';
+  } else {
+    alert.value = true;
+  }
 }
 
 function start() {
@@ -86,6 +93,7 @@ function start() {
   this.number.b = random();
   this.answer = number.value.a * number.value.b;
 
+  options.value = [];
   for (var i = 0; i < 5; i++) {
     options.value.push(distractors(i));
   }
@@ -114,16 +122,12 @@ function shuffleArray(array) {
   }
   return array;
 }
-
-const onSelected = (param) => {
-  selected.value = param;
-  if (selected.value == answer.value) {
-    ++score.value;
-    this.start();
-  } else if (lifes.value > 0) --lifes.value;
-  else {
-    alert.value = true;
-  }
-};
 </script>
+
+<style scoped>
+.selected {
+  color: rgb(27, 8, 138);
+  font-weight: bold;
+}
+</style>
 
